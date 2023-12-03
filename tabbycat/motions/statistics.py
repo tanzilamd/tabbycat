@@ -4,8 +4,10 @@ from django.db.models import Avg, CharField, Count, F, Q, Value
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 
-from motions.models import Motion, RoundMotion
+from draw.types import DebateSide
 from tournaments.models import Round
+
+from .models import Motion, RoundMotion
 
 
 def _annotate_annotations(dict_motions, queryset, fields):
@@ -245,12 +247,12 @@ class MotionBPStatsCalculator:
                     counts.append((points, count, percentage))
                 motion.counts_by_side.append((side, counts))
 
-                if side == 'og' or side == 'oo':
+                if side == DebateSide.OG or side == DebateSide.OO:
                     motion.counts_by_half['top'] += (average / 2)
                 else:
                     motion.counts_by_half['bottom'] += (average / 2)
 
-                if side == 'og' or side == 'cg':
+                if side == DebateSide.OG or side == DebateSide.CG:
                     motion.counts_by_bench['gov'] += (average / 2)
                 else:
                     motion.counts_by_bench['opp'] += (average / 2)

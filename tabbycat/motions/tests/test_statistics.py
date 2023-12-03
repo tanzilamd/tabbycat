@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from draw.models import Debate, DebateTeam
+from draw.types import DebateSide
 from motions.models import DebateTeamMotionPreference, Motion, RoundMotion
 from motions.statistics import MotionBPStatsCalculator, MotionTwoTeamStatsCalculator
 from participants.models import Team
@@ -14,15 +15,15 @@ class TestMotionStatisticsTwoTeam(TestCase):
 
     def setUp(self):
         self.tournament = Tournament.objects.create(slug="motions-twoteam", name="Motion statistics two-team")
-        self.tournament.preferences['debate_rules__teams_in_debate'] = 'two'
+        self.tournament.preferences['debate_rules__teams_in_debate'] = 2
         self.tournament.preferences['debate_rules__ballots_per_debate_prelim'] = 'per-adj'
         team1 = Team.objects.create(tournament=self.tournament, reference="1", use_institution_prefix=False)
         team2 = Team.objects.create(tournament=self.tournament, reference="2", use_institution_prefix=False)
         rd = Round.objects.create(tournament=self.tournament, seq=1)
         motion = Motion.objects.create(text="Motion", reference="Motion", tournament=self.tournament)
         debate = Debate.objects.create(round=rd)
-        dt1 = DebateTeam.objects.create(debate=debate, team=team1, side=DebateTeam.Side.AFF)
-        dt2 = DebateTeam.objects.create(debate=debate, team=team2, side=DebateTeam.Side.NEG)
+        dt1 = DebateTeam.objects.create(debate=debate, team=team1, side=0)
+        dt2 = DebateTeam.objects.create(debate=debate, team=team2, side=1)
         ballotsub = BallotSubmission.objects.create(debate=debate, motion=motion, confirmed=True)
         TeamScore.objects.create(debate_team=dt1, ballot_submission=ballotsub,
             margin=+2, points=1, score=101, win=True,  votes_given=1, votes_possible=1)
@@ -69,7 +70,7 @@ class TestMotionStatisticsBP(TestCase):
 
     def setUp(self):
         self.tournament = Tournament.objects.create(slug="motions-bp", name="Motion statistics BP")
-        self.tournament.preferences['debate_rules__teams_in_debate'] = 'bp'
+        self.tournament.preferences['debate_rules__teams_in_debate'] = 4
         self.tournament.preferences['debate_rules__ballots_per_debate_prelim'] = 'per-debate'
         self.teams = {side: Team.objects.create(tournament=self.tournament, reference=side,
                 use_institution_prefix=False) for side in self.tournament.sides}
@@ -131,7 +132,7 @@ class TestMotionStatisticsBP(TestCase):
         for side in self.tournament.sides:
             dt = DebateTeam.objects.create(debate=debate, team=self.teams[side], side=side)
             TeamScore.objects.create(debate_team=dt, ballot_submission=ballotsub,
-                win=side in ['oo', 'cg'])
+                win=side in [DebateSide.OO, DebateSide.CG])
 
         stats = MotionBPStatsCalculator(self.tournament)
         motion = next(stats.motions)

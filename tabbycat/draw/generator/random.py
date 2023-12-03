@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from .common import BaseBPDrawGenerator, BasePairDrawGenerator, DrawUserError
 from .graph import GraphAllocatedSidesMixin, GraphGeneratorMixin
 from .pairing import BPPairing, Pairing
+from ..types import DebateSide
 
 
 class RandomPairingsMixin:
@@ -110,7 +111,7 @@ class BaseRandomWithAllocatedSidesDrawGenerator(BaseRandomDrawGenerator):
         self.check_teams_for_attribute("allocated_side", choices=["aff", "neg"])
 
     def _get_pools(self):
-        return {side: [t for t in self.teams if t.allocated_side == side] for side in ['aff', 'neg']}
+        return {side: [t for t in self.teams if t.allocated_side == side] for side in [DebateSide.AFF, DebateSide.NEG]}
 
 
 class GraphRandomWithAllocatedSidesDrawGenerator(GraphAllocatedSidesMixin, GraphRandomDrawMixin, BaseRandomWithAllocatedSidesDrawGenerator):

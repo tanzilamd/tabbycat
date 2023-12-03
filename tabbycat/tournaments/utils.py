@@ -51,18 +51,18 @@ SIDE_NAMES = {
 }
 
 BP_SIDE_NAMES = {  # stop-gap before this system gets refactored
-    "og_full": _("opening government"),
-    "oo_full": _("opening opposition"),
-    "cg_full": _("closing government"),
-    "co_full": _("closing opposition"),
-    "og_team": _("opening government team"),
-    "oo_team": _("opening opposition team"),
-    "cg_team": _("closing government team"),
-    "co_team": _("closing opposition team"),
-    "og_abbr": pgettext_lazy("BP position", "OG"),
-    "oo_abbr": pgettext_lazy("BP position", "OO"),
-    "cg_abbr": pgettext_lazy("BP position", "CG"),
-    "co_abbr": pgettext_lazy("BP position", "CO"),
+    "0_full": _("opening government"),
+    "1_full": _("opening opposition"),
+    "2_full": _("closing government"),
+    "3_full": _("closing opposition"),
+    "0_team": _("opening government team"),
+    "1_team": _("opening opposition team"),
+    "2_team": _("closing government team"),
+    "3_team": _("closing opposition team"),
+    "0_abbr": pgettext_lazy("BP position", "OG"),
+    "1_abbr": pgettext_lazy("BP position", "OO"),
+    "2_abbr": pgettext_lazy("BP position", "CG"),
+    "3_abbr": pgettext_lazy("BP position", "CO"),
 }
 
 
@@ -96,22 +96,22 @@ def get_side_name_choices():
     ]
 
 
-def get_side_name(tournament, side, name_type):
+def get_side_name(tournament, side: int, name_type) -> str:
     """Like aff_name, neg_name, etc., but can be used when the side is not known
     at compile time. Example:
         get_side_name(tournament, "aff", "full")
     will return something like "Affirmative" or "Proposition" or "Gobierno",
     depending on the side name option and language setting.
     """
-    if side in ('aff', 'neg'):
+    if side == -1:
+        return gettext('bye')
+    elif tournament is None or tournament.pref('teams_in_debate') == 2:
         names = SIDE_NAMES.get(tournament.pref('side_names'), SIDE_NAMES['aff-neg'])
-        return force_str(names["%s_%s" % (side, name_type)])
-    elif side in ('og', 'oo', 'cg', 'co'):
-        return force_str(BP_SIDE_NAMES["%s_%s" % (side, name_type)])
-    elif side == 'bye':
-        return 'bye'
+        return force_str(names["%d_%s" % (side, name_type)])
+    elif tournament.pref('teams_in_debate') == 4:
+        return force_str(BP_SIDE_NAMES["%d_%s" % (side, name_type)])
     else:
-        raise ValueError("get_side_name() side must be one of: 'aff', 'neg', 'og', 'oo', 'cg', 'co', 'bye', not: %r" % (side,))
+        return gettext('Team %d') % (side + 1)
 
 
 def _get_side_name(name_type):
