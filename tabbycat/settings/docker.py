@@ -6,7 +6,7 @@ import os
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ['https://*.cargotab.net','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.cargotab.net','https://cargotab.net']
 
 DATABASES = {
     'default': {
