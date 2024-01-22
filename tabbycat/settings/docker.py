@@ -8,6 +8,8 @@ ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = ['https://*.cargotab.net','https://cargotab.net']
 
+TIME_ZONE = 'Asia/Dhaka'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -41,3 +43,12 @@ if bool(int(os.environ['DOCKER_REDIS'])) if 'DOCKER_REDIS' in os.environ else Fa
             },
         },
     }
+
+# Email settings for local development using Gmail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'cargotab.mail@gmail.com'  # Your Gmail email address
+EMAIL_HOST_PASSWORD = 'xcgthnuqedecmfyi'  # Your Gmail password
+EMAIL_PORT = 587  # Use TLS port
+EMAIL_USE_TLS = True  # Use TLS for secure connection
+DEFAULT_FROM_EMAIL = 'cargotab.mail@gmail.com'  # Replace with your Gmail email address
