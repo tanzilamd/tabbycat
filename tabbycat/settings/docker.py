@@ -8,8 +8,6 @@ ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = ['https://*.cargotab.net','https://cargotab.net']
 
-WEBSOCKET_URL = "wss://tabbytanzil.cargotab.net/ws/"
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
